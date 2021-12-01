@@ -1,0 +1,454 @@
+---
+title: "R for Soil Data"
+author: "Andrew G. Brown"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+This short course will provide an introduction to using R for soil data analysis. Demonstrations and introductory material provide guidance on routine uses of the RStudio Integrated Development Environment (IDE) for R. 
+
+The goal of this course is to provide basic instruction on using the R environment in RStudio, installing and working with common packages, introductory syntax and code style practices, reproducibility, and stubs for further independent study. It is not expected that participants have prior knowledge of R.
+
+This course will reference many more detailed resources. One of the major resources is the Statistics for Soil Survey (Part 1) book, located here: http://ncss-tech.github.io/stats_for_soil_survey/book/
+
+# Intro to R
+
+## "Base R"
+
+R is a programming language. 
+
+Base R is extended using packages. Packages define functions. Common operations provided by base R include statistics and graphics. Many packages include sample data sets that you can use to demonstrate functionality of the package. 
+
+## R packages
+
+ - **CRAN** - the comprehensive R archive network
+
+Generally considered to be the official, authoritative source for R packages. 
+
+ - **GitHub** - a social media site for open-source software development
+
+Can install R packages directly from GitHub repositories using the R {remotes} package.
+
+  `remotes::install_github("username/reponame")`
+
+_ncss-tech_ R packages
+
+These are some packages maintained by USDA-NRCS/SPSD employees:
+
+ - {aqp}
+ 
+ - {soilDB}
+ 
+ - {sharpshootR}
+ 
+ - {soilReports}
+ 
+Other:
+
+ - {soiltexture}
+ 
+## Getting Help
+
+### R for Data Science book
+
+**https://r4ds.had.co.nz/**
+
+### YaRrr! The Pirate’s Guide to R book
+
+**https://bookdown.org/ndphillips/YaRrr/**
+
+### Statistics for Soil Survey (Part 1) book
+
+**https://ncss-tech.github.io/stats_for_soil_survey/book/intro.html** 
+
+- R package Documentation (Online or in RStudio)
+
+  - Vignettes
+  
+  - Function Documentation
+
+Use `?functionname` to get information about a function or package.
+
+- StackOverflow: https://stackoverflow.com/questions/tagged/r
+
+- GitHub issues pages: https://github.com/
+
+## Exercise 1 (Read a manual page)
+
+- Open the documentation for the `install_github()` function from the {remotes} package by running the following command in the Console:
+
+```{r}
+?remotes::install_github
+```
+
+# Intro to RStudio
+
+[RStudio: An Integrated Development Environment (IDE) for R](https://ncss-tech.github.io/stats_for_soil_survey/book/intro.html#rstudio-an-integrated-development-environment-ide-for-r)
+
+- The Editor and the Console
+
+- The Environment tab and your R session
+
+- Files, Plots, and Help
+
+- Working Directory
+
+- RStudio Projects
+
+## Exercise 2 (Make a Project)
+
+ - Create a new RStudio project in an existing folder (e.g. "C:/workspace2")
+ 
+ - Create a new R script (File >> New File >> R Script)
+ 
+ - Copy and paste the following code into the new Untitled document you created
+ 
+ ```{r, eval = FALSE}
+ x <- 1:10
+ y <- 2
+ z <- 1:2
+ 
+ x
+ x*y
+ x*z
+ ```
+ 
+ - Select all 6 lines of the script by highlighting
+ 
+ - Run the selected code using the keyboard command _Control+Enter_ or by clicking the 'Run' button in the top-right corner of the Editor. 
+ 
+ - Save this script as a .R file in your project directory (e.g. "C:/workspace2/my_script.R")
+ 
+ - Close the script file, and reopen it by finding and clicking the file name in the Files pane (bottom right)
+
+# R basics
+
+[S4SS Chapter 2a Appendix "Data Types"](http://ncss-tech.github.io/stats_for_soil_survey/chapters/2_data/2a_appendix_data_types.html) 
+
+## Vectors and Lists
+
+ - _vector_ = fixed type
+ 
+  `42` - numeric length 1
+ 
+  `1:5` - numeric length 5
+ 
+  `numeric(5)` - numeric length 5
+ 
+  `character(0)` - character length 0
+ 
+  `"abc"` - character length 1
+ 
+ - _list_ = variable data type, may contain `NULL`
+ 
+  `list("apples", "oranges", NA, 1, 2, 3, NULL)`
+ 
+You can check the type of an object using the `typeof()` function. This will return a character (length 1) name such as "logical", "integer", or "character".
+
+  `class(1:5)`
+
+  `class(list(1,2,3,4,5))`
+ 
+You can check the length of a vector or list using the `length()` function. This will return a value of 0 or more.
+
+  `length(1:5)` 
+
+  `length(numeric(5))`
+
+### Indexing of Vectors
+
+Vectors can be indexed (selecting specific elements) using square brackets.
+
+For instance:
+
+```{r}
+# x is the first 10 capital letters of alphabet
+x <- LETTERS[1:10]
+
+# get just the second and third letter from x
+x[2:3]
+
+# remove the second and third letter from x
+x[-(2:3)]
+```
+
+### Indexing of Lists
+
+Lists can be indexed using `[` or `[[`. 
+
+ - The single bracket function will always return a list, and can be used to index multiple elements.
+
+ - The double bracket function will access the contents of a single list element
+
+```{r}
+x <- list("apples", "oranges", NA, 1, 2, 3, NULL)
+
+x[2:3]
+x[-c(2:3)]
+x[[2]]
+
+# does not work
+# x[[2:3]]
+```
+
+### Combining vectors and lists
+
+You can combine vectors and lists with the `c()` function
+
+  `c(1:2, 5:6)` - numeric length 4
+  
+### Comparing vectors
+
+Vectors, which have a known single data type, can be compared using logical operations. A logical operation is a function that returns TRUE or FALSE for each comparison between elements of two input vectors.
+
+Logical operators include:
+ - `==` equal to
+ - `!=` not equal to
+ - `>` / `>=` greater than (or equal to)
+ - `<` / `>=` less than (or equal to)
+ 
+"a" equals "b" (FALSE): `"a" == "b"`
+"a" does not equal "b" (TRUE): `"a" != "b"`
+2 is greater than or equal to 3 (: `2 >= 3`
+
+Another useful operation for pairs of vectors is `%in%` which will tell you whether the first vector's elements are in the second vector.
+
+```{r}
+1:3 %in% 5:10
+
+5:10 %in% 1:3
+
+1:3 %in% 2:10
+```
+
+Logical comparisons are commonly converted to numeric indexes or used to "filter" a data set to create a subset that meets certain criteria.
+
+For instance, `x <- (1:10 %% 2) == 0` gives 10 alternating FALSE and TRUE values in `x` corresponding to whether the values 1 through 10 are odd or even. This is using the `%%` modulo operator: checking whether each number is evenly divisible by two (with remainder equal to zero).
+
+If we use the function `which()` we can get the indexes of that vector where the condition remainder equal to zero was met: `which(x)`. As expected, it is 2, 4, 6, 8, 10.
+
+More on how this can be used when we get to indexing and Data Frames.
+
+## Missing (`NA`) values
+
+"Missing" data are stored in R as the value `NA`. While missing data are very common in "real" data sets, many R functions cannot or will not produce (complete) output when provided with `NA` inputs.
+
+Important functions for handling `NA` include `is.na()` and `na.omit()`. Often summary functions (like `mean()`) take the argument `na.rm` which when set to `TRUE` will remove missing values from the input.
+
+ - http://ncss-tech.github.io/stats_for_soil_survey/book/data.html#missing-values
+
+ - https://bookdown.org/ndphillips/YaRrr/missing-na-values.html
+
+## Data Frames and Matrices
+
+The data.frame object is central to most data analysis work in R. The data.frame object describes "rectangular" data; like a spreadsheet with rows and columns. Internally a data.frame is essentially a list of vectors (columns) that all have the same length (number of rows/records).
+
+data.frame-like objects are used heavily in our soil packages aqp and soilDB. Common subclasses of the data.frame (special versions) include the 'sf' data.frame for representing spatial data and the 'tibble' which is used by {tidyverse}/RStudio R packages.
+
+<!-- A matrix is also "rectangular," but it is all a single data type. Essentially a matrix is a multidimensional vector. We won't cover matrices extensively in this class, but know that R is a powerful tool for linear algebra / matrix calculations and many functions use matrices internally to represent data. -->
+
+### Indexing of Data Frames  
+
+Data frames and matrices can be indexed based on rows or columns.
+
+Say that you have a data.frame:
+
+```{r}
+x <- read.table(text = 'a  1  x
+                        b  2  y
+                        c  3  z', header = FALSE)
+x
+```
+
+The syntax to index the data.frame uses single brackets, with a comma separating the row (i) and column (j) index.
+
+```{r}
+# first row
+x[1, ]
+
+# first column
+x[, 1]
+
+# first and second column
+x[, 1:2]
+
+# columns that are character data type
+x[, sapply(x, is.character)]
+
+# columns by name
+x[, c("V1","V3")]
+```
+
+## Functions
+
+Functions are reusable code chunks with defined inputs. Functions are objects that are defined in packages or by you (in your Global Environment).
+
+We will not cover functions extensively, but know that essentially all components of R syntax involve functions and R is considered to be a "functional" programming language. 
+
+You can save your efforts and minimize repeating yourself by compartmentalizing your analysis into functions. 
+
+[Advanced R: Functions](https://adv-r.hadley.nz/functions.html)
+
+## Exercise 3 (Create an {sf} data.frame)
+
+ - Find a file path to a shapefile or File Geodatabase containing a mapunit polygon geometry feature class. This could be relevant to any of your projects, or downloaded from Web Soil Survey (https://websoilsurvey.sc.egov.usda.gov/App/WebSoilSurvey.aspx) 
+ 
+ - Store the file path as a character vector (R object) called `x`. 
+ 
+    - Any backslash (\\) characters in paths either need to be replaced with a forward slash (/) or "escaped" with a second backslash (`"\\"`)
+ 
+ - Load the {sf} package with `library(sf)`
+ 
+ - Open up the Help documentation for the {sf} function `st_layers()` using `?st_layers`
+ 
+ - Call the `st_layers()` function on your file path. If you used a Geodatabase you may see several layers.
+ 
+ - Open up the Help documentation for the {sf} function `st_read()` using `?st_read`
+ 
+ - Read the documentation for the `dsn` and `layer` arguments. 
+ 
+ - Use `st_read()` to create a new {sf} data.frame object called `geom` containing your _MUPOLYGON_ or "_a" feature class. 
+ 
+ - Inspect the resulting object by typing `geom` in the console. What type of geometry does your feature class have? How many features and fields? If you use the `colnames()` function on your object, what do you get?
+ 
+# Data Manipulation
+
+## Data and "grammars for data manipulation"
+
+## {dplyr} Overview
+
+(source: https://github.com/tidyverse/dplyr)
+
+{dplyr} is a grammar of data manipulation, providing a consistent set of verbs that help you solve the most common data manipulation challenges:
+
+ - `mutate()` adds new variables that are functions of existing variables
+ - `select()` picks variables based on their names.
+ - `filter()` picks cases based on their values.
+ - `summarise()` reduces multiple values down to a single summary.
+ - `arrange()` changes the ordering of the rows
+ 
+These all combine naturally with `group_by()` which allows you to perform any operation “by group”. You can learn more about them in `vignette("dplyr")`. As well as these single-table verbs, dplyr also provides a variety of two-table verbs, which you can learn about in `vignette("two-table")`.
+
+If you are new to dplyr, the best place to start is the [data transformation](https://r4ds.had.co.nz/transform.html) chapter in R for data science.
+ 
+# The Data We Use (S4SS Ch. 2)
+
+Here we will jump over to Chapter 2 from the Statistics for Soil Survey class.
+
+aqp
+
+  - [The SoilProfileCollection](http://ncss-tech.github.io/stats_for_soil_survey/book/data.html#the-soilprofilecollection)
+
+soilDB
+
+  - [soilDB data interfaces](http://ncss-tech.github.io/stats_for_soil_survey/book/data.html#soildb-functions-for-tabular-data)
+  
+  - [Using soilDB](http://ncss-tech.github.io/stats_for_soil_survey/book/data.html#using-the-soildb-package)
+
+# Visualization
+
+## Plots and Graphics
+
+ - {ggplot2}: a grammar for graphics (https://ggplot2.tidyverse.org/)
+
+ - [{geocompr} book Making maps with R](https://geocompr.robinlovelace.net/adv-map.html)
+ 
+## Exercise 4: Interactive Pedon Location Map
+
+This exercise will demonstrate how to use R Markdown to make interactive maps inside HTML reports. 
+
+<!-- 0. Install the development version of `mapview` using `remotes`. -->
+
+<!-- ```{r, eval=FALSE} -->
+<!-- remotes::install_github("r-spatial/mapview", dependencies=FALSE) -->
+<!-- ``` -->
+
+1. Open a new R Markdown document: _File >> New File >> R Markdown..._
+
+2. Enter a **Title** and select `HTML` as the output format.
+
+3. The YAML header is bounded by lines with 3 dashes (`---`) and must begin on the first line in the file. Read then delete all text below the YAML header. 
+
+4. Enter the following code from Chapter 4, Exercise 1 (4.4.2)
+
+ - http://ncss-tech.github.io/stats_for_soil_survey/book/spatial.html#exercise-1
+ 
+````
+```{r, eval=TRUE}`r ''`
+library(aqp)
+library(soilDB)
+library(sf)
+library(mapview)
+
+pedons <- fetchNASIS(from = 'pedons')
+
+pedons.sp <- subset(pedons, !is.na(x_std) & !is.na(y_std))
+
+pedon.locations <- st_as_sf(
+  site(pedons.sp), 
+  coords = c('x_std','y_std'),
+  crs = st_crs(4326) #WGS84 GCS
+)
+
+mapview(pedon.locations, 
+        legend = FALSE, 
+        map.types = 'OpenStreetMap', 
+        label = pedon.locations$site_id)
+```
+````
+
+5. Click the Knit button (Yarn icon). You will be prompted to save your file if you have not already. Save it as `my-pedons_YOURNAME.Rmd`. The file name must end in _.Rmd_.
+
+6. Inspect the output. Look at the messages that are produced from loading packages, and the interactive plot should be at the bottom of the page. 
+
+ - What options are available on the map?
+ 
+ - What happens when you click on a point?
+
+# Cookbook for new data analysis
+
+ - Frame the question
+
+ - Identify data elements of interest
+
+ - Identify test cases
+
+ - Build a query / get the data
+ 
+ - Inspect results
+ 
+ - Summarize with tables, graphics and reports
+
+# Code snippets
+
+1. Make a vector into a comma-separated character string with `paste0(..., collapse=",")`
+```{r}
+paste0(c(1,2,3), collapse=",")
+```
+
+2. Convert a copy/pasted table to an R object using `read.table(text=...)`
+
+```{r}
+read.table(text = 
+'648575
+648637
+648736
+648755
+648756
+648962
+648972
+1301175
+1301539
+1301595
+1302796', header = FALSE)
+```
+
+# soilReports exercises
+
+[soilReports exercises](http://ncss-tech.github.io/stats_for_soil_survey/book/data.html#soil-reports)
